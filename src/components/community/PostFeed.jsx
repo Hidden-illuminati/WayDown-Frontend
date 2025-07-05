@@ -22,10 +22,13 @@ const PostFeed = ({ onLike, onAddComment }) => {
 
       console.log("🚀 Fetching posts from API:", { page, limit });
 
-      const response = await axios.get("http://localhost:3000/api/community/posts", {
-        params: { page, limit },
-        timeout: 5000,
-      });
+      const response = await axios.get(
+        "https://waydown-backend-0w9y.onrender.com/api/community/posts",
+        {
+          params: { page, limit },
+          timeout: 5000,
+        }
+      );
 
       if (!response.data || !response.data.posts) {
         throw new Error("Invalid response format: Missing posts field");
@@ -40,12 +43,15 @@ const PostFeed = ({ onLike, onAddComment }) => {
         postsData.map(async (post) => {
           try {
             const commentsResponse = await axios.get(
-              `http://localhost:3000/api/community/posts/${post._id}/comments`,
+              `https://waydown-backend-0w9y.onrender.com/api/community/posts/${post._id}/comments`,
               { timeout: 5000 }
             );
             return { ...post, comments: commentsResponse.data || [] };
           } catch (err) {
-            console.error(`❌ Failed to fetch comments for post ${post._id}:`, err.message);
+            console.error(
+              `❌ Failed to fetch comments for post ${post._id}:`,
+              err.message
+            );
             return { ...post, comments: [] };
           }
         })
@@ -53,7 +59,11 @@ const PostFeed = ({ onLike, onAddComment }) => {
 
       setPosts(postsWithComments);
     } catch (err) {
-      console.error("❌ API Error:", err.response?.status, err.response?.data || err.message);
+      console.error(
+        "❌ API Error:",
+        err.response?.status,
+        err.response?.data || err.message
+      );
       setError("Failed to load posts. Please check the API and try again.");
     } finally {
       setLoading(false);
@@ -122,9 +132,12 @@ const PostFeed = ({ onLike, onAddComment }) => {
                   onError={(e) => (e.target.src = "/fallback-avatar.jpg")}
                 />
                 <div>
-                  <h6 className="mb-0">{post.user?.username || "Unknown User"}</h6>
+                  <h6 className="mb-0">
+                    {post.user?.username || "Unknown User"}
+                  </h6>
                   <small className="text-muted">
-                    {new Date(post.createdAt).toLocaleDateString()} • {post.location}
+                    {new Date(post.createdAt).toLocaleDateString()} •{" "}
+                    {post.location}
                   </small>
                 </div>
               </div>
@@ -136,7 +149,12 @@ const PostFeed = ({ onLike, onAddComment }) => {
               {/* Post Tags */}
               <div className="mb-3">
                 {post.tags.map((tag, index) => (
-                  <Badge bg="light" text="dark" className="me-2 mb-2" key={index}>
+                  <Badge
+                    bg="light"
+                    text="dark"
+                    className="me-2 mb-2"
+                    key={index}
+                  >
                     #{tag}
                   </Badge>
                 ))}
@@ -146,7 +164,11 @@ const PostFeed = ({ onLike, onAddComment }) => {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <div>
                   <Button
-                    variant={post.likes.includes(user?.uid) ? "danger" : "outline-primary"}
+                    variant={
+                      post.likes.includes(user?.uid)
+                        ? "danger"
+                        : "outline-primary"
+                    }
                     size="sm"
                     className="me-2"
                     onClick={() => handleLike(post._id)} // Use onLike via handleLike
@@ -159,7 +181,9 @@ const PostFeed = ({ onLike, onAddComment }) => {
                     variant="outline-secondary"
                     size="sm"
                     onClick={() =>
-                      setActiveCommentPost(activeCommentPost === post._id ? null : post._id)
+                      setActiveCommentPost(
+                        activeCommentPost === post._id ? null : post._id
+                      )
                     }
                     disabled={!user}
                   >
@@ -179,9 +203,14 @@ const PostFeed = ({ onLike, onAddComment }) => {
                     <div className="existing-comments mb-3">
                       <h6 className="mb-3 text-muted">Comments</h6>
                       {post.comments.map((comment, index) => (
-                        <div key={index} className="comment mb-2 pb-2 border-bottom">
+                        <div
+                          key={index}
+                          className="comment mb-2 pb-2 border-bottom"
+                        >
                           <div className="d-flex">
-                            <div className="fw-bold me-2">{comment.username}</div>
+                            <div className="fw-bold me-2">
+                              {comment.username}
+                            </div>
                             <div>{comment.text}</div>
                           </div>
                           <small className="text-muted">
@@ -219,7 +248,9 @@ const PostFeed = ({ onLike, onAddComment }) => {
         ))
       ) : (
         <div className="text-center py-5">
-          <p className="text-muted">No posts yet. Be the first to share a hidden spot!</p>
+          <p className="text-muted">
+            No posts yet. Be the first to share a hidden spot!
+          </p>
         </div>
       )}
     </div>

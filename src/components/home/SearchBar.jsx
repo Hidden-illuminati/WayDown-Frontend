@@ -1,11 +1,18 @@
-import { useState, useCallback, useEffect } from 'react';
-import { InputGroup, Form, Button, Spinner, ListGroup, Alert } from 'react-bootstrap';
-import axios from 'axios';
-import PropTypes from 'prop-types';
-import debounce from 'lodash/debounce';
+import { useState, useCallback, useEffect } from "react";
+import {
+  InputGroup,
+  Form,
+  Button,
+  Spinner,
+  ListGroup,
+  Alert,
+} from "react-bootstrap";
+import axios from "axios";
+import PropTypes from "prop-types";
+import debounce from "lodash/debounce";
 
 const SearchBar = ({ onSearch }) => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
@@ -23,16 +30,22 @@ const SearchBar = ({ onSearch }) => {
       setError(null);
 
       try {
-        const response = await axios.get('http://localhost:3000/api/spots/search/suggestions', {
-          params: { q: searchQuery },
-          timeout: 5000,
-        });
+        const response = await axios.get(
+          "https://waydown-backend-0w9y.onrender.com/api/spots/search/suggestions",
+          {
+            params: { q: searchQuery },
+            timeout: 5000,
+          }
+        );
         const data = response.data;
         // Ensure suggestions is an array
         setSuggestions(Array.isArray(data) ? data : data?.suggestions || []);
       } catch (err) {
-        console.error('Error fetching suggestions:', err.response?.data || err.message);
-        setError('Failed to fetch suggestions. Please try again.');
+        console.error(
+          "Error fetching suggestions:",
+          err.response?.data || err.message
+        );
+        setError("Failed to fetch suggestions. Please try again.");
         setSuggestions([]);
       } finally {
         setLoading(false);
@@ -62,16 +75,26 @@ const SearchBar = ({ onSearch }) => {
       setSuggestions([]); // Clear suggestions on full search
 
       try {
-        const response = await axios.get('http://localhost:3000/api/spots/search', {
-          params: { query },
-          timeout: 5000,
-        });
+        const response = await axios.get(
+          "https://waydown-backend-0w9y.onrender.com/api/spots/search",
+          {
+            params: { query },
+            timeout: 5000,
+          }
+        );
         const searchResults = response.data;
         // Pass results to parent (ensure it’s an array or structured data)
-        onSearch(Array.isArray(searchResults) ? searchResults : searchResults.spots || []);
+        onSearch(
+          Array.isArray(searchResults)
+            ? searchResults
+            : searchResults.spots || []
+        );
       } catch (err) {
-        console.error('Error during search:', err.response?.data || err.message);
-        setError('Search failed. Please try again.');
+        console.error(
+          "Error during search:",
+          err.response?.data || err.message
+        );
+        setError("Search failed. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -112,7 +135,11 @@ const SearchBar = ({ onSearch }) => {
           disabled={loading}
           aria-label="Search for spots"
         />
-        <Button variant="primary" type="submit" disabled={loading || !query.trim()}>
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={loading || !query.trim()}
+        >
           Search
         </Button>
       </InputGroup>
@@ -121,14 +148,14 @@ const SearchBar = ({ onSearch }) => {
       {suggestions.length > 0 && (
         <ListGroup
           className="position-absolute w-100"
-          style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'auto' }}
+          style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}
         >
           {suggestions.map((suggestion, index) => (
             <ListGroup.Item
               key={index}
               action
               onClick={() => handleSuggestionClick(suggestion)}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
             >
               {suggestion}
             </ListGroup.Item>
@@ -138,7 +165,12 @@ const SearchBar = ({ onSearch }) => {
 
       {/* Error message */}
       {error && (
-        <Alert variant="danger" className="small mt-1" dismissible onClose={() => setError(null)}>
+        <Alert
+          variant="danger"
+          className="small mt-1"
+          dismissible
+          onClose={() => setError(null)}
+        >
           {error}
           <Button variant="link" onClick={handleSubmit} className="p-0 ms-2">
             Retry

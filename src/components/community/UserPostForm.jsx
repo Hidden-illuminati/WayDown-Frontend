@@ -18,13 +18,16 @@ const UserPostForm = ({ onAddPost, onCancel }) => {
   const [error, setError] = useState(null);
   const [user, userLoading] = useAuthState(auth);
 
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: null }));
-    }
-  }, [errors]);
+  const handleChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: null }));
+      }
+    },
+    [errors]
+  );
 
   const handleImageChange = useCallback((e) => {
     const files = Array.from(e.target.files).slice(0, 5);
@@ -65,7 +68,7 @@ const UserPostForm = ({ onAddPost, onCancel }) => {
       try {
         const token = await user.getIdToken();
         const response = await axios.post(
-          "http://localhost:3000/api/community/posts",
+          "https://waydown-backend-0w9y.onrender.com/api/community/posts",
           postData,
           {
             headers: {
@@ -76,10 +79,19 @@ const UserPostForm = ({ onAddPost, onCancel }) => {
           }
         );
         onAddPost(response.data.post); // Pass only the post object
-        setFormData({ title: "", content: "", location: "", tags: "", images: [] });
+        setFormData({
+          title: "",
+          content: "",
+          location: "",
+          tags: "",
+          images: [],
+        });
         setLoading(false);
       } catch (err) {
-        setError("Failed to share post: " + (err.response?.data?.message || err.message));
+        setError(
+          "Failed to share post: " +
+            (err.response?.data?.message || err.message)
+        );
         setLoading(false);
       }
     },
@@ -130,7 +142,9 @@ const UserPostForm = ({ onAddPost, onCancel }) => {
               isInvalid={!!errors.title}
               disabled={loading}
             />
-            <Form.Control.Feedback type="invalid">{errors.title}</Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">
+              {errors.title}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="postContent">
@@ -145,7 +159,9 @@ const UserPostForm = ({ onAddPost, onCancel }) => {
               isInvalid={!!errors.content}
               disabled={loading}
             />
-            <Form.Control.Feedback type="invalid">{errors.content}</Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">
+              {errors.content}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Row>
@@ -161,7 +177,9 @@ const UserPostForm = ({ onAddPost, onCancel }) => {
                   isInvalid={!!errors.location}
                   disabled={loading}
                 />
-                <Form.Control.Feedback type="invalid">{errors.location}</Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">
+                  {errors.location}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
 
@@ -189,11 +207,17 @@ const UserPostForm = ({ onAddPost, onCancel }) => {
               multiple
               disabled={loading}
             />
-            <Form.Text className="text-muted">Share photos of this hidden spot (max 5 images)</Form.Text>
+            <Form.Text className="text-muted">
+              Share photos of this hidden spot (max 5 images)
+            </Form.Text>
           </Form.Group>
 
           <div className="d-flex justify-content-end gap-2">
-            <Button variant="outline-secondary" onClick={onCancel} disabled={loading}>
+            <Button
+              variant="outline-secondary"
+              onClick={onCancel}
+              disabled={loading}
+            >
               Cancel
             </Button>
             <Button variant="primary" type="submit" disabled={loading}>

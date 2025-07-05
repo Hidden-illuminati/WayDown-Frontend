@@ -23,7 +23,7 @@ const MySavedSpots = () => {
       }
 
       const response = await axios.get(
-        `http://localhost:3000/api/users/${user.uid}/favorites`,
+        `https://waydown-backend-0w9y.onrender.com/api/users/${user.uid}/favorites`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
